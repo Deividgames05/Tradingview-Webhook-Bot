@@ -1,18 +1,17 @@
 {
-   "KEY": 12345,
-   "EXCHANGES": {
-        "BYBIT": {
-             "API_KEY": "api-key-goes-here",
-             "API_SECRET": "api-secret-goes-here",
-             "ENABLED": true,
-             "TESTNET": false
-        },
-        "binance-futures": {
-             "API_KEY": "zzVmejwKSLmFH7bcMCa77rB8XszOIwEkYoXDs4rlD9kMs5mgmsnDSdEkj05qnBKZ",
-             "API_SECRET": "VaOMds3SSrqooacQLBODEoxUtuUdUs7sBj0QkSy4eDrPhIBtG4GfkYyknFkIvc2F",
-             "ENABLED": true,
-             "TESTNET": false
-        }
-   }
-
+  "KEY": 12345,
+  "EXCHANGES": {
+    "BYBIT": {
+      "API_KEY": "api-key-goes-here",
+      "API_SECRET": "api-secret-goes-here",
+      "ENABLED": false,
+      "TESTNET": false
+    },
+    "BINANCE-FUTURES": {
+      "API_KEY": "zzVnejwKsLMfH7bcMCa77rB8XsZ0IwEfYoXDs4rLD9kMs5mgsnDSdeKj05gnBKZ",
+      "API_SECRET": "VaQMdS3SSrqoocaQLB0DEoxUtlUduJ7sBj80Ksy4eDrPhIBtG4GfKyKnFkTvc2F",
+      "ENABLED": true,
+      "TESTNET": false
+    }
+  }
 }

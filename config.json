@@ -7,7 +7,7 @@
       "ENABLED": false,
       "TESTNET": false
     },
-    "BINANCE-FUTURES": {
+    "binance-futures": {
       "API_KEY": "zzVnejwKsLMfH7bcMCa77rB8XsZ0IwEfYoXDs4rLD9kMs5mgsnDSdeKj05gnBKZ",
       "API_SECRET": "VaQMdS3SSrqoocaQLB0DEoxUtlUduJ7sBj80Ksy4eDrPhIBtG4GfKyKnFkTvc2F",
       "ENABLED": true,

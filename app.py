@@ -150,12 +150,13 @@ def webhook():
         print("🤖 Executando bot com dados:", trade_data)
         bot = Bot()
         bot.run(trade_data)
-        print("🚀 Rodando bot.run() com os dados:", data)
-        print(f"🔄 Executando ação: {acao} para {symbol}")
+        print("🚀 Rodando bot.run() com os dados:", trade_data)
+        print(f"🔄 Executando ação: {trade_data['acao']} para {symbol}")
 
         return {"status": "sucesso", "mensagem": f"Ação '{trade_data['acao']}' executada para {symbol}"}
     else:
         return {"status": "erro", "mensagem": "Binance Futures não habilitado"}
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000, debug=False)

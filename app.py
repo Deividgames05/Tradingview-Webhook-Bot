@@ -77,114 +77,79 @@ if use_binance_futures:
         print("Invalid Binance Futures API key.")
         use_binance_futures = False
 
-@app.route('/')
-def index():
-    return {'message': 'Server is running!'}
-
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    print("Hook Received!")
-    data = json.loads(request.data)
-    print(data)
+    print("🚨 Alerta recebido!")
+    try:
+        data = json.loads(request.data)
+        print("🔎 Dados recebidos:", data)
+    except Exception as e:
+        return {"status": "erro", "mensagem": f"Erro ao interpretar JSON: {str(e)}"}
 
-    if int(data['key']) != config['KEY']:
-        print("Invalid Key, Please Try Again!")
-        return {
-            "status": "error",
-            "message": "Invalid Key, Please Try Again!"
-        }
+    # Segurança com chave (se estiver configurada no config.json)
+    if "key" in config and "key" in data:
+        if str(data["key"]) != str(config["key"]):
+            return {"status": "erro", "mensagem": "Chave inválida"}
 
-    ##############################################################################
-    #             Bybit
-    ##############################################################################
-    if data['exchange'] == 'bybit':
+    # Interpreta campos do alerta
+    msg = data.get("msg", "").upper()
+    symbol = data.get("ticker", "").replace(".P", "").replace("USDT", "USDT")  # limpa sufixo
+    price = float(data.get("price", 0))
 
-        if use_bybit:
-            if data['close_position'] == 'True':
-                print("Closing Position")
-                session.close_position(symbol=data['symbol'])
-            else:
-                if 'cancel_orders' in data:
-                    print("Cancelling Order")
-                    session.cancel_all_active_orders(symbol=data['symbol'])
-                if 'type' in data:
-                    print("Placing Order")
-                    if 'price' in data:
-                        price = data['price']
-                    else:
-                        price = 0
+    # Define o valor da operação (0.50 usdt com alavancagem máxima)
+    operation_value = 0.50
 
+    # Cria objeto base para o bot
+    trade_data = {
+        "symbol": symbol,
+        "valor_usdt": operation_value,
+        "price": price  # valor atual da moeda
+    }
 
-                    if data['order_mode'] == 'Both':
-                        take_profit_percent = float(data['take_profit_percent'])/100
-                        stop_loss_percent = float(data['stop_loss_percent'])/100
-                        current_price = session.latest_information_for_symbol(symbol=data['symbol'])['result'][0]['last_price']
-                        if data['side'] == 'Buy':
-                            take_profit_price = round(float(current_price) + (float(current_price) * take_profit_percent), 2)
-                            stop_loss_price = round(float(current_price) - (float(current_price) * stop_loss_percent), 2)
-                        elif data['side'] == 'Sell':
-                            take_profit_price = round(float(current_price) - (float(current_price) * take_profit_percent), 2)
-                            stop_loss_price = round(float(current_price) + (float(current_price) * stop_loss_percent), 2)
+    # Decide a ação com base no texto da mensagem
+    if "HORA DE COMPRAR" in msg:
+        trade_data["acao"] = "comprar"
+        print("🟢 Entrando comprado em", symbol)
 
-                        print("Take Profit Price: " + str(take_profit_price))
-                        print("Stop Loss Price: " + str(stop_loss_price))
+    elif "HORA DE VENDER" in msg:
+        trade_data["acao"] = "vender"
+        print("🔴 Entrando vendido em", symbol)
 
-                        session.place_active_order(symbol=data['symbol'], order_type=data['type'], side=data['side'],
-                                                   qty=data['qty'], time_in_force="GoodTillCancel", reduce_only=False,
-                                                   close_on_trigger=False, price=price, take_profit=take_profit_price, stop_loss=stop_loss_price)
+    elif "GAIN DE ALTA 3%" in msg:
+        trade_data["acao"] = "parcial_compra"
+        print("✅ Take parcial da compra em", symbol)
 
-                    elif data['order_mode'] == 'Profit':
-                        take_profit_percent = float(data['take_profit_percent'])/100
-                        current_price = session.latest_information_for_symbol(symbol=data['symbol'])['result'][0]['last_price']
-                        if data['side'] == 'Buy':
-                            take_profit_price = round(float(current_price) + (float(current_price) * take_profit_percent), 2)
-                        elif data['side'] == 'Sell':
-                            take_profit_price = round(float(current_price) - (float(current_price) * take_profit_percent), 2)
+    elif "GAIN DE BAIXA 3%" in msg:
+        trade_data["acao"] = "parcial_venda"
+        print("✅ Take parcial da venda em", symbol)
 
-                        print("Take Profit Price: " + str(take_profit_price))
-                        session.place_active_order(symbol=data['symbol'], order_type=data['type'], side=data['side'],
-                                                   qty=data['qty'], time_in_force="GoodTillCancel", reduce_only=False,
-                                                   close_on_trigger=False, price=price, take_profit=take_profit_price)
-                    elif data['order_mode'] == 'Stop':
-                        stop_loss_percent = float(data['stop_loss_percent'])/100
-                        current_price = session.latest_information_for_symbol(symbol=data['symbol'])['result'][0]['last_price']
-                        if data['side'] == 'Buy':
-                            stop_loss_price = round(float(current_price) - (float(current_price) * stop_loss_percent), 2)
-                        elif data['side'] == 'Sell':
-                            stop_loss_price = round(float(current_price) + (float(current_price) * stop_loss_percent), 2)
+    elif "GAIN EXTRA ALTA" in msg:
+        trade_data["acao"] = "final_compra"
+        print("🏁 Finalizando 5% restante da compra em", symbol)
 
-                        print("Stop Loss Price: " + str(stop_loss_price))
-                        session.place_active_order(symbol=data['symbol'], order_type=data['type'], side=data['side'],
-                                                   qty=data['qty'], time_in_force="GoodTillCancel", reduce_only=False,
-                                                   close_on_trigger=False, price=price, stop_loss=stop_loss_price)
+    elif "GAIN EXTRA BAIXA" in msg:
+        trade_data["acao"] = "final_venda"
+        print("🏁 Finalizando 5% restante da venda em", symbol)
 
-                    else:
-                        session.place_active_order(symbol=data['symbol'], order_type=data['type'], side=data['side'],
-                                                   qty=data['qty'], time_in_force="GoodTillCancel", reduce_only=False,
-                                                   close_on_trigger=False, price=price)
+    elif "STOP H" in msg:
+        trade_data["acao"] = "stop_compra"
+        print("🛑 Stop na compra em", symbol)
 
-        return {
-            "status": "success",
-            "message": "Bybit Webhook Received!"
-        }
-    ##############################################################################
-    #             Binance Futures
-    ##############################################################################
-        if data['exchange'] == 'binance-futures':
-            if use_binance_futures:
-                bot = Bot()
-                bot.run(data)
-                return {
-                    "status": "success",
-                    "message": "Binance Futures Webhook Received!"
-                }
+    elif "STOP L" in msg:
+        trade_data["acao"] = "stop_venda"
+        print("🛑 Stop na venda em", symbol)
 
-        else:
-            print("Invalid Exchange, Please Try Again!")
-            return {
-                "status": "error",
-                "message": "Invalid Exchange, Please Try Again!"
-            }
+    else:
+        print("⚠️ Mensagem não reconhecida:", msg)
+        return {"status": "ignorado", "mensagem": "Tipo de alerta não identificado"}
+
+    # Executa ação no robô
+    if use_binance_futures:
+        bot = Bot()
+        bot.run(trade_data)
+        return {"status": "sucesso", "mensagem": f"Ação '{trade_data['acao']}' executada para {symbol}"}
+    else:
+        return {"status": "erro", "mensagem": "Binance Futures não habilitado"}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000, debug=False)

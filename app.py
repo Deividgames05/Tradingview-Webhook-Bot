@@ -140,13 +140,19 @@ def webhook():
         print("🛑 Stop na venda em", symbol)
 
     else:
-        print("⚠️ Mensagem não reconhecida:", msg)
+        print("⚠️ ALERTA IGNORADO: Mensagem não reconhecida:", msg)
+        print("🔧 Campos disponíveis:", data)
         return {"status": "ignorado", "mensagem": "Tipo de alerta não identificado"}
+
 
     # Executa ação no robô
     if use_binance_futures:
+        print("🤖 Executando bot com dados:", trade_data)
         bot = Bot()
         bot.run(trade_data)
+        print("🚀 Rodando bot.run() com os dados:", data)
+        print(f"🔄 Executando ação: {acao} para {symbol}")
+
         return {"status": "sucesso", "mensagem": f"Ação '{trade_data['acao']}' executada para {symbol}"}
     else:
         return {"status": "erro", "mensagem": "Binance Futures não habilitado"}

@@ -7,9 +7,9 @@
              "ENABLED": true,
              "TESTNET": false
         },
-        "BINANCE-FUTURES": {
-             "API_KEY": "api-key-goes-here",
-             "API_SECRET": "api-secret-goes-here",
+        "binance-futures": {
+             "API_KEY": "zzVmejwKSLmFH7bcMCa77rB8XszOIwEkYoXDs4rlD9kMs5mgmsnDSdEkj05qnBKZ",
+             "API_SECRET": "VaOMds3SSrqooacQLBODEoxUtuUdUs7sBj0QkSy4eDrPhIBtG4GfkYyknFkIvc2F",
              "ENABLED": false,
              "TESTNET": false
         }

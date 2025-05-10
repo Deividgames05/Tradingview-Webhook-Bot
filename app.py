@@ -46,9 +46,9 @@ if 'BYBIT' in config['EXCHANGES']:
     )
 
 use_binance_futures = False
-if 'BINANCE-FUTURES' in config['EXCHANGES']:
-    if config['EXCHANGES']['BINANCE-FUTURES']['ENABLED']:
-        print("Binance is enabled!")
+if 'binance-futures' in config['EXCHANGES']:
+    if config['EXCHANGES']['binance-futures']['ENABLED']:
+        print("Binance é habilitado!")
         use_binance_futures = True
 
         exchange = ccxt.binance({

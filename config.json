@@ -8,8 +8,8 @@
       "TESTNET": false
     },
     "binance-futures": {
-      "API_KEY": "zzVnejwKsLMfH7bcMCa77rB8XsZ0IwEfYoXDs4rLD9kMs5mgsnDSdeKj05gnBKZ",
-      "API_SECRET": "VaQMdS3SSrqoocaQLB0DEoxUtlUduJ7sBj80Ksy4eDrPhIBtG4GfKyKnFkTvc2F",
+      "API_KEY": "edoYVMdQHKfVcpYOqXoqITkXBMxRD2eAiRn3FNaAaxhzRcZRq3W0hpJ64YokDVvL",
+      "API_SECRET": "4I9m4jXHho0lBQ5HcuOezdVuqYa9xZSDgNEKa8WiTtAG7qXkm4laeJw4QgCFQbNB",
       "ENABLED": true,
       "TESTNET": false
     }

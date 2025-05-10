@@ -52,8 +52,8 @@ if 'binance-futures' in config['EXCHANGES']:
         use_binance_futures = True
 
         exchange = ccxt.binance({
-        'apiKey': config['EXCHANGES']['BINANCE-FUTURES']['API_KEY'],
-        'secret': config['EXCHANGES']['BINANCE-FUTURES']['API_SECRET'],
+        'apiKey': config['EXCHANGES']['binance-futures']['API_KEY'],
+        'secret': config['EXCHANGES']['binance-futures']['API_SECRET'],
         'options': {
             'defaultType': 'future',
             },
